@@ -69,4 +69,3 @@ Proyecto personal enfocado en la integración de Inteligencia Artificial en apli
 ---
 
 ⭐ Si te resulta interesante este proyecto, ¡puedes dejar una estrella en el repositorio!
->>>>>>> 6cf6b05 (Subir proyecto)
