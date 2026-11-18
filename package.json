@@ -1,0 +1,20 @@
+{
+  "name": "testes-pdf-quiz",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generador local de tests de 20 preguntas a partir de un PDF.",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check public/app.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@google/genai": "^3.3.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "multer": "^2.0.2"
+  }
+}

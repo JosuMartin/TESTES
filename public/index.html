@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Genera tests de estudio de 20 preguntas a partir de tus apuntes en PDF.">
+    <title>TESTES — Convierte tus PDF en tests</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="TESTES, volver al inicio">
+        <span class="brand-mark" aria-hidden="true">T</span>
+        <span>TESTES</span>
+      </a>
+      <span id="api-status" class="api-status" role="status">Comprobando IA…</span>
+    </header>
+
+    <main>
+      <section id="upload-view" class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Estudia tus propios apuntes</p>
+          <h1 id="page-title">Del PDF al test,<br><span>en unos segundos.</span></h1>
+          <p class="intro">Selecciona uno de tus temas y la IA preparará 20 preguntas basadas únicamente en su contenido.</p>
+
+          <div class="feature-list" aria-label="Características">
+            <span><b>20</b> preguntas</span>
+            <span><b>4</b> opciones</span>
+            <span><b>1</b> respuesta correcta</span>
+          </div>
+        </div>
+
+        <div class="upload-card">
+          <form id="upload-form" novalidate>
+            <label id="drop-zone" class="drop-zone" for="pdf-input">
+              <input id="pdf-input" name="pdf" type="file" accept="application/pdf,.pdf" required>
+              <span class="document-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 56" role="img">
+                  <path d="M8 2h21l11 11v39a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
+                  <path d="M29 2v11h11M15 27h18M15 35h18M15 43h12"/>
+                </svg>
+              </span>
+              <span class="drop-title">Arrastra aquí tu PDF</span>
+              <span class="drop-separator">o</span>
+              <span class="file-button">Seleccionar archivo</span>
+              <span class="drop-help">PDF · máximo 40 MB</span>
+            </label>
+
+            <div id="selected-file" class="selected-file" hidden>
+              <span class="file-type" aria-hidden="true">PDF</span>
+              <span class="file-details">
+                <strong id="file-name"></strong>
+                <small id="file-size"></small>
+              </span>
+              <button id="remove-file" class="icon-button" type="button" aria-label="Quitar archivo">×</button>
+            </div>
+
+            <p id="form-error" class="error-message" role="alert" hidden></p>
+            <button id="generate-button" class="primary-button" type="submit" disabled>
+              <span>Crear test de 20 preguntas</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </form>
+          <p class="privacy-note">
+            <span aria-hidden="true">◇</span>
+            El PDF se procesa para generar el test y no se guarda en esta aplicación.
+          </p>
+        </div>
+
+        <section id="history-section" class="history-panel" aria-labelledby="history-title">
+          <div class="history-header">
+            <div>
+              <p class="eyebrow">Tu progreso</p>
+              <h2 id="history-title">Historial de tests</h2>
+            </div>
+            <button id="clear-history-button" class="text-button danger-text" type="button" hidden>Borrar historial</button>
+          </div>
+          <p id="history-empty" class="history-empty">Todavía no has empezado ningún test. Cuando generes uno, podrás retomarlo desde aquí.</p>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </section>
+
+      <section id="loading-view" class="centered-view" aria-labelledby="loading-title" hidden>
+        <div class="loader" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="eyebrow">Analizando el documento</p>
+        <h2 id="loading-title">Preparando tus 20 preguntas…</h2>
+        <p id="loading-file" class="muted"></p>
+        <p class="muted">Puede tardar alrededor de un minuto.</p>
+      </section>
+
+      <section id="quiz-view" class="quiz-view" aria-labelledby="quiz-title" hidden>
+        <div class="quiz-header">
+          <div>
+            <p class="eyebrow">Test en curso</p>
+            <h2 id="quiz-title"></h2>
+          </div>
+          <button id="new-pdf-button" class="text-button" type="button">Elegir otro PDF</button>
+        </div>
+
+        <div class="progress-row">
+          <span id="question-counter">Pregunta 1 de 20</span>
+          <span id="score-counter">0 aciertos</span>
+        </div>
+        <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+
+        <article class="question-card">
+          <p id="question-number" class="question-number"></p>
+          <h3 id="question-text" tabindex="-1"></h3>
+          <div id="options-list" class="options-list" role="group" aria-label="Opciones de respuesta"></div>
+
+          <div id="feedback" class="feedback" role="status" hidden>
+            <strong id="feedback-title"></strong>
+            <p id="feedback-explanation"></p>
+            <small id="feedback-source"></small>
+          </div>
+
+          <button id="next-button" class="primary-button next-button" type="button" hidden>
+            <span>Siguiente pregunta</span><span aria-hidden="true">→</span>
+          </button>
+        </article>
+      </section>
+
+      <section id="results-view" class="centered-view" aria-labelledby="results-title" hidden>
+        <div id="score-ring" class="score-ring"><span id="final-score"></span><small>/ 20</small></div>
+        <p class="eyebrow">Test completado</p>
+        <h2 id="results-title"></h2>
+        <p id="results-message" class="intro"></p>
+        <div class="result-actions">
+          <button id="retry-button" class="primary-button" type="button">Repetir este test</button>
+          <button id="results-new-pdf-button" class="secondary-button" type="button">Crear otro test</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>TESTES · Tu temario, convertido en práctica.</p>
+    </footer>
+  </body>
+</html>
